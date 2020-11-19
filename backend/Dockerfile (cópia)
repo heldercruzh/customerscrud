@@ -1,0 +1,16 @@
+FROM openjdk:8-jdk-alpine as customer_backend
+WORKDIR /api
+COPY target /api
+# ENTRYPOINT ["java","-jar","/*.jar"]
+# RUN java -jar customers-0.0.1-SNAPSHOT.jar
+# CMD [ "java -jar /usr/src/api/customers-0.0.1-SNAPSHOT.jar" ]
+
+#FROM nginx:alpine
+#VOLUME /var/cache/nginx
+#COPY --from=customer_backend /usr/src/api /usr/share/nginx/html
+
+FROM nginx:alpine
+VOLUME /var/cache/nginx
+RUN apk add openjdk8
+COPY --from=customer_backend /api /usr/share/nginx/html
+CMD "java -Dserver.port=8080 -jar /usr/share/nginx/html/customers-0.0.1-SNAPSHOT.jar"

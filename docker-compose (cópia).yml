@@ -1,0 +1,82 @@
+version: '3.4'
+
+services:
+
+#  Example: https://dev.to/andrewallison/docker-and-windows-1cb0
+#  Create a service named db.
+  db:
+    image: postgres:latest
+    network_mode: bridge
+    container_name: customer_db
+    volumes:
+      - ./db/postgresql/data
+    expose:
+      - 5433
+    ports:
+      - 5433:5432  
+    restart: always 
+    environment:
+      POSTGRES_DB: customerdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      PGDATA: ./db/postgresql/data
+        
+  pgadmin:
+    image: dpage/pgadmin4
+    network_mode: bridge
+    container_name: pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@linuxhint.com
+      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "8083:80"
+    volumes:
+      - ./db/pgadmin
+    depends_on:
+      - "db"
+    links:
+      - "db:pgsql-server"
+            
+         
+  backend:
+    image: customer_backend
+    build: ./backend/customers_api/
+    network_mode: bridge
+    container_name: customer_backend
+    volumes: 
+      - ./backend/customers_api/target
+    expose:
+      - 8082
+      - 8084
+    ports:
+      - 8082:8080
+      - 8084:80
+    #restart: always
+    depends_on:
+      - "db"
+    links:
+      - "db"
+      
+  frontend:  
+    image: customers_angular
+    build: ./frontend/customers_frontend/frontend/
+    network_mode: bridge
+    container_name: customer_frontend    
+    volumes: 
+      - ./frontend/customers_frontend/frontend/
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "10m"
+            max-file: "5"
+    expose:
+      - 8081
+    ports:
+      - 8081:80
+    restart: always
+    depends_on:
+      - "backend"
+    links:
+      - "backend"

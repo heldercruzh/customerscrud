@@ -1,0 +1,31 @@
+<div class="card bg-light shadow border-0">
+  <h4 class="card-header bg-transparent pb-3">
+    <i class="fas fa-users"></i>
+    <b> List Customers</b>
+  </h4>
+  <div class="card-body bg-transparent pb-3">
+    <div *ngIf="loading" class="spinner-border spinner-border-sm"></div>
+    <table *ngIf="usuarios" class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Nome</th>
+          <th scope="col">Phone</th>
+          <th scope="col">Celphone</th>
+          <th scope="col">Email</th>
+          <th scope="col">Edit</th>
+          <th scope="col">Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuarios">
+          <td>{{usuario.username}}</td>
+          <td>{{usuario.username}}</td>
+          <td>{{usuario.username}}</td>
+          <td>{{usuario.username}}</td>
+          <td><i class="fas fa-edit"></i></td>
+          <td><i class="fas fa-trash-alt"></i></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
